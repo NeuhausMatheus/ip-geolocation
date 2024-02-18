@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.fullname" . }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      run: uwsgi
+      app: flask
+  template:
+    metadata:
+      labels:
+        run: uwsgi
+        app: flask
+    spec:
+      containers:
+      - name: flask
+        image: "{{ .Values.container.image }}"
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_PASSWORD
+          value: {{ .Values.db.password }}
+        - name: DB_USER
+          value: {{ .Values.db.user }}
+        - name: DB_HOST
+          value: {{ .Values.db.host }}
+        - name: DB_NAME
+          value: {{ .Values.db.name }}

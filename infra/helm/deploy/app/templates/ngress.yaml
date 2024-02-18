@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "chart.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+    cert-manager.io/issuer: letsencrypt-staging
+    external-dns.alpha.kubernetes.io/zone: public
+spec:
+  tls:
+  - hosts:
+    - geolocation.matheusneuhaus.com
+    secretName: web-ssl
+  defaultBackend:
+    service:
+      name: {{ include "chart.fullname" . }}
+      port:
+        number: 5000
+  rules:
+    - host: geolocation.matheusneuhaus.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "chart.fullname" . }}
+                port:
+                  number: 5000

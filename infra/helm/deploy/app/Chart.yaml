@@ -1,0 +1,4 @@
+apiVersion: v2
+name: ip-geolocation
+description: A Geolocation App
+version: 0.1.0

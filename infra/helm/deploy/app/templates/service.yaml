@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "chart.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  # annotations:
+  #   cloud.google.com/load-balancer-type: "External"  # Annotation for external load balancer
+  #   cloud.google.com/load-balancer-address-type: "External"  # Annotation for external IP
+  #   # networking.gke.io/load-balancer-type: "Internal"  # Annotation for internal load balancer
+  #   # networking.gke.io/internal-load-balancer-allowed-cidrs: "10.0.0.0/8"  # Annotation for allowing CIDR ranges for internal load balancer
+  #   cloud.google.com/neg: '{"ingress": true}'  # Annotation for enabling Network Endpoint Groups (NEG)
+spec:
+  selector:
+    run: uwsgi
+    app: flask
+  ports:
+  - port: 5000
+    targetPort: 5000
+  type: ClusterIP
