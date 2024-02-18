@@ -36,12 +36,10 @@ variable "db_host" {
 
 variable "db_user" {
   type        = string
-  default     = "ipgeolocation"
   description = "database host"
 }
 
 variable "secrets"{
-       default     = "ipgeolocation"
          type        = string
 }
 
