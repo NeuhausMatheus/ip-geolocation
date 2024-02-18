@@ -10,9 +10,9 @@ env:
   DB_PASS:  ${{ secrets.PASS }}
   DB_HOST:  ${{ secrets.HOST }}
   DB_NAME:  ${{ secrets.NAME }}
-  # DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  # DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-  
+  DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+  REPO: ${{ secrets.REPO }}
   CHART_PATH: ./infra/helm/deploy/app
   
   GAR_LOCATION: us-useast1
@@ -50,7 +50,7 @@ jobs:
     
     - name: Docker configuration
       run: |-
-        docker login -u oauth2accesstoken -p ${{steps.auth.outputs.access_token}}  https://$GAR_LOCATION-docker.pkg.dev
+        docker login -u $DOCKER_USER -p $DOCKER_PASS
 
     
     
@@ -69,19 +69,15 @@ jobs:
     # Build the Docker image
     - name: Build
       run: |-
-        docker build \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" \
+        docker build -f src/Dockerfile \
+          --tag "$REPO:$GITHUB_SHA" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
           .
     # Push the Docker image to Google Artifact Registry
     - name: Publish
       run: |-
-        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
-
-
-
-
+        docker push "$REPO:$GITHUB_SHA"
 
 
 
@@ -97,7 +93,7 @@ jobs:
           --zone $GKE_ZONE \
           --project $PROJECT_ID
         helm upgrade -i $HELM_NAME $CHART_PATH \
-          --set container.image="$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" \
+          --set container.image="$REPO:$GITHUB_SHA" \
           --set db.user=$DB_USER \       
           --set db.password=$DB_PASS \          
           --set db.host=$DB_HOST \          
