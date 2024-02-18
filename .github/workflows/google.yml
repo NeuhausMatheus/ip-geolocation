@@ -69,7 +69,7 @@ jobs:
     # Build the Docker image
     - name: Build
       run: |-
-        docker build -f src/Dockerfile --tag "$REPO:$GITHUB_REF-$GITHUB_SHA"
+        docker build -f src/Dockerfile --tag "$REPO:$GITHUB_REF-$GITHUB_SHA" .
           
     # Push the Docker image to Google Artifact Registry
     - name: Publish
@@ -84,13 +84,14 @@ jobs:
         curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
         
     # Deploy the Docker image to the GKE cluster
+          #   gcloud container clusters get-credentials $GKE_CLUSTER \
+          # --region $GKE_REGION \
+          # --project $PROJECT_ID
     - name: Deploy
       run: |
-        gcloud container clusters get-credentials $GKE_CLUSTER \
-          --region $GKE_REGION \
-          --project $PROJECT_ID
         helm upgrade -i $HELM_NAME $CHART_PATH \
           --set container.image="$REPO:$GITHUB_REF-$GITHUB_SHA" \
+          --set namespace=$NAMESPACE \             
           --set db.user=$DB_USER \       
           --set db.password=$DB_PASS \          
           --set db.host=$DB_HOST \          
