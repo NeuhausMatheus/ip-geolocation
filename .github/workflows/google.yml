@@ -70,13 +70,13 @@ jobs:
     - name: Build
       run: |-
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
-        docker build -f ./Dockerfile --tag "$REPO:$TAG" .
+        docker build -f ./Dockerfile --tag "$REPO:v.$TAG" .
           
     # Push the Docker image to Google Artifact Registry
     - name: Publish
       run: |-
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
-        docker build -f ./Dockerfile --tag "$REPO:$TAG" .
+        docker build -f ./Dockerfile --tag "$REPO:v.$TAG" .
 
 
 
@@ -92,4 +92,4 @@ jobs:
     - name: Deploy
       run: |
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
-        helm --debug upgrade --install ip-geolocation  ./infra/helm/deploy/app -n prod  --set container.image="$REPO:$TAG"  --set namespace=$NAMESPACE --set db.user=$DB_USER --set db.password=$DB_PASS --set db.host=$DB_HOST   --set db.name=$DB_NAME
+        helm --debug upgrade --install ip-geolocation  ./infra/helm/deploy/app -n prod  --set container.image="$REPO:v.$TAG"  --set namespace=$NAMESPACE --set db.user=$DB_USER --set db.password=$DB_PASS --set db.host=$DB_HOST   --set db.name=$DB_NAME
