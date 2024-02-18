@@ -76,7 +76,7 @@ jobs:
     - name: Publish
       run: |-
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
-        docker build -f ./Dockerfile --tag "$REPO:$TAG"
+        docker build -f ./Dockerfile --tag "$REPO:$TAG" .
 
 
 
