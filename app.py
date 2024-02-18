@@ -46,7 +46,7 @@ def index():
         cur.execute("INSERT INTO ipgeolocation (ip, timestamp) VALUES (%s, %s)", (reversed_ip, current_time))
         conn.commit()
 
-        return "Received IP: " + ip_address + "  --  Timestamp: " + str(current_time)
+        return "Received IP: " + ip_address + "  --  Timestamp: " + str(current_time) + "  (UTC)"
     except psycopg2.Error as e:
         conn.rollback()
         print("Error executing SQL query:", e)
