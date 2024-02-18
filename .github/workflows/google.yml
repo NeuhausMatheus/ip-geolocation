@@ -69,12 +69,13 @@ jobs:
     # Build the Docker image
     - name: Build
       run: |-
-        docker build -f src/Dockerfile --tag "$REPO:$GITHUB_REF-$GITHUB_SHA" .
+        export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
+        docker build -f src/Dockerfile --tag "$REPO:$TAG" .
           
     # Push the Docker image to Google Artifact Registry
     - name: Publish
       run: |-
-        export TAG=$(echo "$GITHUB_REF-$GITHUB_SHA" | cut -c 1-8)
+        export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
         docker build -f src/Dockerfile --tag "$REPO:$TAG"
 
 
@@ -90,6 +91,7 @@ jobs:
           # --project $PROJECT_ID
     - name: Deploy
       run: |
+        export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
         helm upgrade -i $HELM_NAME $CHART_PATH \
           --set container.image="$REPO:$TAG" \
           --set namespace=$NAMESPACE \             
