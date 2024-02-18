@@ -92,7 +92,7 @@ jobs:
     - name: Deploy
       run: |
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
-        helm upgrade -i $HELM_NAME $CHART_PATH \
+        helm upgrade -i ip-geolocation ./infra/helm/deploy/app   \
           --set container.image="$REPO:$TAG" \
           --set namespace=$NAMESPACE \             
           --set db.user=$DB_USER \       
