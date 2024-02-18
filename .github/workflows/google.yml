@@ -92,4 +92,4 @@ jobs:
     - name: Deploy
       run: |
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
-        helm --debug upgrade --install ip-geolocation  ./infra/helm/deploy/app --set container.image="$REPO:$TAG"  --set namespace=$NAMESPACE --set db.user=$DB_USER --set db.password=$DB_PASS --set db.host=$DB_HOST   --set db.name=$DB_NAME
+        helm --debug upgrade --install ip-geolocation  ./infra/helm/deploy/app -n prod  --set container.image="$REPO:$TAG"  --set namespace=$NAMESPACE --set db.user=$DB_USER --set db.password=$DB_PASS --set db.host=$DB_HOST   --set db.name=$DB_NAME
