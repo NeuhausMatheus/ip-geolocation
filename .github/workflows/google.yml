@@ -6,11 +6,13 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GCP_CREDS_JSON: '${{ secrets.GCP_CREDENTIALS }}'
   DB_USER:  ${{ secrets.DB_USER }}
   DB_PASS:  ${{ secrets.PASS }}
   DB_HOST:  ${{ secrets.HOST }}
   DB_NAME:  ${{ secrets.NAME }}
+  # DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  # DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+  
   CHART_PATH: ./infra/helm/deploy/app
   
   GAR_LOCATION: us-useast1
@@ -48,7 +50,7 @@ jobs:
     
     - name: Docker configuration
       run: |-
-        echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+        docker login -u oauth2accesstoken -p ${{steps.auth.outputs.access_token}}  https://$GAR_LOCATION-docker.pkg.dev
 
     
     
