@@ -88,7 +88,7 @@ jobs:
     # Deploy the Docker image to the GKE cluster
           #   gcloud container clusters get-credentials $GKE_CLUSTER \
           # --region $GKE_REGION \
-          # --project $PROJECT_ID
+          # --project $PROJECT_ID  
     - name: Deploy
       run: |
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
