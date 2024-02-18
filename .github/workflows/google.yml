@@ -16,8 +16,8 @@ env:
   CHART_PATH: ./infra/helm/deploy/app
   
   GAR_LOCATION: us-useast1
-  GKE_CLUSTER: cluster-1   
-  GKE_ZONE: us-useast1-a  
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }} 
+  GKE_REGION: us-east1 
   HELM_NAME: ip-geolocation 
   REPOSITORY: registry
   IMAGE: ipgeolocation
@@ -59,7 +59,7 @@ jobs:
       uses: google-github-actions/get-gke-credentials@v0
       with:
         cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_ZONE }}
+        location: ${{ env.GKE_REGION }}
 
 
 
@@ -69,15 +69,12 @@ jobs:
     # Build the Docker image
     - name: Build
       run: |-
-        docker build -f src/Dockerfile \
-          --tag "$REPO:$GITHUB_SHA" \
-          --build-arg GITHUB_SHA="$GITHUB_SHA" \
-          --build-arg GITHUB_REF="$GITHUB_REF" \
-          .
+        docker build -f src/Dockerfile --tag "$REPO:$GITHUB_REF-$GITHUB_SHA"
+          
     # Push the Docker image to Google Artifact Registry
     - name: Publish
       run: |-
-        docker push "$REPO:$GITHUB_SHA"
+        docker push "$REPO:$GITHUB_REF-$GITHUB_SHA"
 
 
 
@@ -90,10 +87,10 @@ jobs:
     - name: Deploy
       run: |
         gcloud container clusters get-credentials $GKE_CLUSTER \
-          --zone $GKE_ZONE \
+          --region $GKE_REGION \
           --project $PROJECT_ID
         helm upgrade -i $HELM_NAME $CHART_PATH \
-          --set container.image="$REPO:$GITHUB_SHA" \
+          --set container.image="$REPO:$GITHUB_REF-$GITHUB_SHA" \
           --set db.user=$DB_USER \       
           --set db.password=$DB_PASS \          
           --set db.host=$DB_HOST \          
