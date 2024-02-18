@@ -1,14 +1,14 @@
 
----
-# secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: web-ssl
-type: kubernetes.io/tls
-stringData:
-  tls.key: ""
-  tls.crt: ""
+# ---
+# # secret.yaml
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: web-ssl
+# type: kubernetes.io/tls
+# stringData:
+#   tls.key: ""
+#   tls.crt: ""
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
