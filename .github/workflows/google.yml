@@ -74,7 +74,8 @@ jobs:
     # Push the Docker image to Google Artifact Registry
     - name: Publish
       run: |-
-        docker push "$REPO:$GITHUB_REF-$GITHUB_SHA"
+        export TAG=$(echo "$GITHUB_REF-$GITHUB_SHA" | cut -c 1-8)
+        docker build -f src/Dockerfile --tag "$REPO:$TAG"
 
 
 
@@ -90,7 +91,7 @@ jobs:
     - name: Deploy
       run: |
         helm upgrade -i $HELM_NAME $CHART_PATH \
-          --set container.image="$REPO:$GITHUB_REF-$GITHUB_SHA" \
+          --set container.image="$REPO:$TAG" \
           --set namespace=$NAMESPACE \             
           --set db.user=$DB_USER \       
           --set db.password=$DB_PASS \          
