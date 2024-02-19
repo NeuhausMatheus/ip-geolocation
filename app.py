@@ -39,14 +39,14 @@ def index():
         else:
             ip_address = ip_address.split(',')[0].strip()
         reversed_ip = reverse_ip(ip_address)
-        print("Reversed IP:", reversed_ip[::-1])  # Log the reversed IP in reverse order
+        print("Reversed IP:", reversed_ip[::-1])
 
         current_time = datetime.now()
 
         cur.execute("INSERT INTO ipgeolocation (ip, timestamp) VALUES (%s, %s)", (reversed_ip, current_time))
         conn.commit()
 
-        return "Received IP: " + ip_address + "  --  Timestamp: " + str(current_time) + "  (UTC)"
+        return "Client's IP in Reverse: " + reversed_ip + "  --  Timestamp: " + str(current_time) + "  (UTC)"
     except psycopg2.Error as e:
         conn.rollback()
         print("Error executing SQL query:", e)
