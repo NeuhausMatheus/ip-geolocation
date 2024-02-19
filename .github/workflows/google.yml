@@ -23,9 +23,6 @@ env:
   IMAGE: ipgeolocation
   NAMESPACE: prod
 
-  
-  
-
 jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
@@ -40,55 +37,35 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    
-    # Authentication via credentials json
     - id: 'auth'
       uses: 'google-github-actions/auth@v0'
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    
     - name: Docker configuration
       run: |-
         docker login -u $DOCKER_USER -p $DOCKER_PASS
 
-    
-    
-    # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
       uses: google-github-actions/get-gke-credentials@v0
       with:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_REGION }}
 
-
-
-
-
-
-    # Build the Docker image
     - name: Build
       run: |-
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
         docker build -f ./Dockerfile --tag "$REPO:v.$TAG" .
-          
-    # Push the Docker image to Google Artifact Registry
+
     - name: Publish
       run: |-
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
         docker push "$REPO:v.$TAG"
 
-
-
-    # Install helm
     - name: Install Helm
       run: |
         curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
         
-    # Deploy the Docker image to the GKE cluster
-          #   gcloud container clusters get-credentials $GKE_CLUSTER \
-          # --region $GKE_REGION \
-          # --project $PROJECT_ID  
     - name: Deploy
       run: |
         export TAG=$(echo "$GITHUB_SHA" | cut -c 1-8)
