@@ -39,7 +39,7 @@ def index():
         else:
             ip_address = ip_address.split(',')[0].strip()
         reversed_ip = reverse_ip(ip_address)
-        print("Reversed IP:", reversed_ip)
+        print("Reversed IP:", reversed_ip[::-1])  # Log the reversed IP in reverse order
 
         current_time = datetime.now()
 
